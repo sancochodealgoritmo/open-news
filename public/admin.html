@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>open-news · Configuración</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B1220'/%3E%3Ccircle cx='12' cy='16' r='6' fill='%23FEC526'/%3E%3Ccircle cx='22' cy='16' r='4' fill='%2306ACCB'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --azul: #005588; --noche: #0B1220; --blanco: #FFFFFF; --fondo: #F5F7F9;
+      --tinta: #2A2A2A; --gris: #5A6673; --linea: #E3E7EB; --amarillo: #FEC526;
+      --verde-t: #0E7A37; --rojo-t: #A93226; --radio: 10px;
+      --sombra: 0 1px 2px rgba(11,18,32,.06), 0 2px 8px rgba(11,18,32,.05);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--tinta); background: var(--fondo);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-size: 15px; line-height: 1.5; min-height: 100vh; background: var(--fondo); }
+    button, input, select, textarea { font: inherit; }
+    :focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; border-radius: 4px; }
+
+    .barra { background: var(--noche); color: #F5F7F9; display: flex; align-items: center; gap: 12px 16px; padding: 10px 20px; flex-wrap: wrap; }
+    .marca { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; font-weight: 800; font-size: 19px; letter-spacing: -.2px; }
+    .marca .punto { width: 14px; height: 14px; border-radius: 50%; background: var(--amarillo); box-shadow: 6px 0 0 -2px var(--azul), 12px 0 0 -4px #06ACCB; margin-right: 10px; }
+    .barra .sub { color: #C9D4E0; font-size: 13px; }
+    .barra .espacio { flex: 1; }
+
+    main { max-width: 1120px; margin: 0 auto; padding: 20px; }
+    .rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; align-items: start; }
+    .caja { background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra); padding: 16px; }
+    .caja h2 { margin: 0 0 4px; font-size: 16px; color: var(--noche); }
+    .caja .sutil { color: var(--gris); font-size: 13px; margin: 0 0 12px; }
+
+    .campo { margin-bottom: 12px; }
+    .campo label { display: block; font-size: 13px; color: var(--gris); margin-bottom: 4px; }
+    .campo label.over { color: var(--verde-t); font-weight: 700; }
+    .campo input, .campo textarea { width: 100%; border: 1px solid var(--linea); border-radius: 8px; padding: 8px 10px; min-height: 40px; background: #fff; }
+    .campo textarea { min-height: 72px; resize: vertical; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+    .campo .actual { font-size: 11.5px; color: var(--gris); }
+
+    .tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tabla th, .tabla td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+    .tabla th { color: var(--gris); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+    .tabla input { width: 100%; border: 1px solid var(--linea); border-radius: 6px; padding: 5px 8px; min-height: 34px; font-size: 13px; }
+    .tabla input.chico { width: 64px; }
+
+    .barra-acciones { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 0; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--linea); background: var(--blanco); color: var(--noche); font-weight: 600; cursor: pointer; }
+    .btn:hover { border-color: #C3CBD3; background: #FAFBFC; }
+    .btn.primario { background: var(--azul); border-color: var(--azul); color: #fff; }
+    .btn.peligro { color: var(--rojo-t); border-color: #EBC4BF; }
+    .btn.chico { min-height: 34px; padding: 4px 10px; font-size: 13px; }
+
+    .mensaje { font-size: 13px; padding: 8px 10px; border-radius: 6px; margin: 10px 0; }
+    .mensaje.error { background: #F8E1DE; color: var(--rojo-t); }
+    .mensaje.ok { background: #E3F4EA; color: var(--verde-t); }
+    .mensaje.neutro { background: #EEF1F4; color: var(--gris); }
+
+    .notion { white-space: pre-wrap; font-size: 12.5px; background: #F5F7F9; border-radius: 8px; padding: 10px; margin: 8px 0; max-height: 260px; overflow: auto; font-family: ui-monospace, Menlo, monospace; }
+    .pie { padding: 18px 20px; font-size: 13px; color: var(--gris); border-top: 1px solid var(--linea); background: var(--blanco); }
+  </style>
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="/"><span class="punto" aria-hidden="true"></span><span>open-news</span></a>
+    <span class="sub">Configuración · versión <b id="version">—</b></span>
+    <span class="espacio"></span>
+    <a class="btn chico" href="/" style="background:#16213A;border-color:#33415A;color:#F5F7F9;">Volver al workspace</a>
+  </header>
+
+  <main id="contenido">
+    <div class="barra-acciones">
+      <button class="btn primario" id="guardar">Guardar cambios</button>
+      <button class="btn" id="sync">Sincronizar desde Notion</button>
+      <button class="btn peligro" id="restablecer">Restablecer DEFAULTS</button>
+    </div>
+    <div id="aviso"></div>
+
+    <div class="rejilla">
+      <div class="caja" style="grid-column:1 / -1;">
+        <h2>Fuentes de ingesta (RSS)</h2>
+        <p class="sutil">Catálogo de feeds editables. El ciclo diario (paso 15) los consume.</p>
+        <div class="tabla" style="overflow-x:auto;">
+          <table id="tabla-feeds">
+            <thead><tr><th>Medio</th><th>Familia</th><th>Nivel</th><th>URL feed</th><th>Activo</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button class="btn chico" id="agregar-feed" style="margin-top:10px;">+ Agregar feed</button>
+      </div>
+    </div>
+
+    <div class="rejilla" id="secciones" style="margin-top:16px;"></div>
+
+    <div class="caja" style="margin-top:16px;">
+      <h2>Referencia desde Notion (Reglas · Prompts · Fuentes)</h2>
+      <p class="sutil">Sincronización best-effort; no modifica la configuración local automáticamente.</p>
+      <div class="notion" id="notion-out">Sin sincronizar.</div>
+    </div>
+  </main>
+
+  <footer class="pie">open-news · backend de configuración en caliente · los secretos permanecen en <code>.env</code></footer>
+  <script type="module" src="/admin.js"></script>
+</body>
+</html>

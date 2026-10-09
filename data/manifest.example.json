@@ -1,0 +1,18 @@
+{
+  "version": "Panamá · Señales y Evidencias v1",
+  "fecha_corte_UTC": "2026-10-05T00:00:00Z",
+  "consultas": {
+    "gdelt": "Panama, logística, turismo, economía, eventos naturales; ventana 30-90 días",
+    "banco_mundial": "PAN, CRI, COL, DOM, MEX, GTM · 6 indicadores · 2010-2024",
+    "usgs": "2024-01-01 a 2024-12-31 · lat 5-12 · lon -86/-76 · M ≥ 3"
+  },
+  "licencia_condiciones": "Noticias: solo metadatos salvo permiso. Banco Mundial: CC BY 4.0. USGS: dominio público.",
+  "transformaciones": ["dedup por URL canónica", "seendate separado de fecha_publicacion", "nulos conservados"],
+  "archivos": [
+    { "archivo": "noticias.csv", "cantidad": 200, "sha256": "REEMPLAZAR_CON_HASH_REAL" },
+    { "archivo": "fuentes.json", "cantidad": 1, "sha256": "REEMPLAZAR_CON_HASH_REAL" },
+    { "archivo": "indicadores.csv", "cantidad": 540, "sha256": "REEMPLAZAR_CON_HASH_REAL" },
+    { "archivo": "eventos.geojson", "cantidad": 1, "sha256": "REEMPLAZAR_CON_HASH_REAL" },
+    { "archivo": "sbp_series.csv", "cantidad": 12, "sha256": "REEMPLAZAR_CON_HASH_REAL" }
+  ]
+}

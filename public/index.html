@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>open-news · De la señal a la decisión</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B1220'/%3E%3Ccircle cx='12' cy='16' r='6' fill='%23FEC526'/%3E%3Ccircle cx='22' cy='16' r='4' fill='%2306ACCB'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --azul: #005588; --noche: #0B1220; --blanco: #FFFFFF; --fondo: #F5F7F9;
+      --tinta: #2A2A2A; --gris: #5A6673; --linea: #E3E7EB; --amarillo: #FEC526;
+      --verde-t: #0E7A37; --radio: 10px;
+      --sombra: 0 1px 2px rgba(11,18,32,.06), 0 2px 8px rgba(11,18,32,.05);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--tinta); background: var(--fondo);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-size: 15px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; background: var(--fondo); }
+    a { color: var(--azul); }
+    button, input, select, textarea { font: inherit; }
+    :focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; border-radius: 4px; }
+
+    .barra { background: var(--noche); color: #F5F7F9; display: flex; align-items: center; gap: 10px 16px; padding: 10px 20px; flex-wrap: wrap; border-bottom: 3px solid #005588; }
+    .marca { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; font-weight: 800; font-size: 19px; letter-spacing: -.2px; }
+    .marca .punto { width: 14px; height: 14px; border-radius: 50%; background: var(--amarillo); box-shadow: 6px 0 0 -2px #005588, 12px 0 0 -4px #06ACCB; margin-right: 10px; }
+    .barra .espacio { flex: 1; }
+    .chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.08); color: #D5DEE8; }
+    .chip.alerta { background: var(--amarillo); color: var(--noche); }
+
+    .hero { background: var(--noche); color: #F5F7F9; padding: 56px 20px 72px; }
+    .hero .dentro, .landing .dentro { max-width: 1120px; margin: 0 auto; }
+    .hero .sobre { color: var(--amarillo); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 13px; margin: 0 0 12px; }
+    .hero h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 0 0 16px; letter-spacing: -1px; }
+    .hero p.lead { font-size: 19px; color: #C9D4E0; max-width: 720px; margin: 0; }
+
+    .landing { padding: 0 20px 40px; margin-top: -40px; }
+    .tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .tarjeta-mod { background: var(--blanco); border-radius: 14px; box-shadow: var(--sombra); border: 1px solid var(--linea); overflow: hidden; display: flex; flex-direction: column; }
+    .tarjeta-mod .franja { height: 8px; }
+    .tarjeta-mod .cuerpo { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .tarjeta-mod h2 { margin: 0; font-size: 22px; color: var(--noche); }
+    .tarjeta-mod .usuario { color: var(--gris); font-size: 14px; margin: 0; }
+    .tarjeta-mod ul { margin: 4px 0 0; padding-left: 18px; color: var(--tinta); font-size: 14px; }
+    .tarjeta-mod .entrar { margin-top: auto; align-self: flex-start; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--linea); background: var(--blanco); color: var(--noche); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .btn:hover { border-color: #C3CBD3; background: #FAFBFC; }
+    .btn.primario { background: #005588; border-color: #005588; color: #fff; }
+
+    .confianza { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 28px 0 0; }
+    .confianza div { background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--radio); padding: 14px; font-size: 14px; }
+    .confianza b { display: block; color: var(--noche); margin-bottom: 2px; }
+
+    .proyecto { margin: 32px 0 0; }
+    .proyecto h2 { margin: 0 0 4px; font-size: 22px; color: var(--noche); }
+    .retos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+    .reto { background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--radio); padding: 16px; border-top: 4px solid #C3CBD3; }
+    .reto.reto-tvn { border-top-color: #005588; }
+    .reto.reto-banco { border-top-color: #B8892B; }
+    .reto.nucleo { background: #F0F3F6; border-top-color: var(--noche); }
+    .reto-nombre { margin: 0; font-weight: 700; color: var(--noche); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .reto .sutil { color: var(--gris); font-size: 13px; }
+    .reto ul { margin: 6px 0 10px; padding-left: 18px; font-size: 14px; }
+
+    .pie { margin-top: auto; padding: 18px 20px; font-size: 13px; color: var(--gris); border-top: 1px solid var(--linea); background: var(--blanco); display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; }
+
+    @media (max-width: 860px) {
+      .confianza, .retos { grid-template-columns: 1fr; }
+      .barra { padding: 10px 16px; }
+      .hero { padding: 40px 16px 64px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="barra">
+    <a class="marca" href="/" aria-label="open-news, inicio"><span class="punto" aria-hidden="true"></span><span>open-news</span></a>
+    <span class="espacio"></span>
+    <span class="chip" id="status-strip">cargando…</span>
+    <a class="btn" href="/admin" style="background:#16213A;border-color:#33415A;color:#F5F7F9;min-height:36px;">Configuración</a>
+  </header>
+
+  <section class="hero">
+    <div class="dentro">
+      <p class="sobre">De la señal a la decisión</p>
+      <h1>Evidencia priorizada y borradores con cita, para tres mesas.</h1>
+      <p class="lead">open-news carga fuentes públicas, filtra desinformación (S3F), prioriza con RIUNE y entrega borradores con cita por afirmación. Aprobar un borrador no es publicar.</p>
+    </div>
+  </section>
+
+  <section class="landing">
+    <div class="dentro">
+      <div class="tarjetas">
+        <article class="tarjeta-mod">
+          <div class="franja" style="background:#005588"></div>
+          <div class="cuerpo">
+            <h2>Mesa Editorial</h2>
+            <p class="usuario">Para: Editor/a y periodista</p>
+            <ul>
+              <li>Agenda Top-5 para Panamá (vida media 72 h)</li>
+              <li>Brief ≤250 palabras · guion de TV 45–60 s · copy ≤80</li>
+            </ul>
+            <a class="btn primario entrar" href="/principal">Entrar a Mesa Editorial</a>
+          </div>
+        </article>
+
+        <article class="tarjeta-mod">
+          <div class="franja" style="background:#06ACCB"></div>
+          <div class="cuerpo">
+            <h2>Mesa Digital</h2>
+            <p class="usuario">Para: Productor/a digital</p>
+            <ul>
+              <li>Bandeja digital (vida media 36 h)</li>
+              <li>3 titulares ≤70 · resumen web ≤250 · copy · guion vertical</li>
+            </ul>
+            <a class="btn primario entrar" href="/digital" style="background:#046F84;border-color:#046F84;">Entrar a Mesa Digital</a>
+          </div>
+        </article>
+
+        <article class="tarjeta-mod">
+          <div class="franja" style="background:#B8892B"></div>
+          <div class="cuerpo">
+            <h2>Radar de Entorno</h2>
+            <p class="usuario">Para: Analista económico y de riesgo</p>
+            <ul>
+              <li>Radar sectorial (9 sectores · 14 días)</li>
+              <li>Boletín ≤250 con observación vs hipótesis</li>
+            </ul>
+            <a class="btn primario entrar" href="/banca" style="background:#7D5A12;border-color:#7D5A12;">Entrar a Radar de Entorno</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="confianza">
+        <div><b>Cada afirmación con cita</b>ID de evidencia a la fuente: NOT, WB, USGS.</div>
+        <div><b>Sin veredictos</b>El filtro enruta y explica; nunca etiqueta verdadero o falso.</div>
+        <div><b>El código decide</b>Puntaje RIUNE, estado de evidencia y validaciones V01–V11.</div>
+        <div><b>La persona decide</b>Cinco estados de revisión; aprobar como borrador no publica.</div>
+      </div>
+
+      <section class="proyecto">
+        <h2>Un núcleo, dos retos</h2>
+        <p class="sutil" style="color:#5A6673;font-size:14px;margin:0 0 12px;">Un único núcleo de evidencias alimenta los módulos de TVN Media y del Radar de Entorno.</p>
+        <div class="retos">
+          <div class="reto reto-tvn">
+            <p class="reto-nombre">Reto TVN Media</p>
+            <p class="sutil">Mesa Editorial y Mesa Digital.</p>
+            <ul><li>Filtro de desinformación S3F</li><li>Priorización RIUNE</li><li>Entregables con cita</li></ul>
+          </div>
+          <div class="reto nucleo">
+            <p class="reto-nombre">Núcleo común · open-news</p>
+            <p class="sutil">Mismo código, mismas reglas y mismo snapshot.</p>
+            <ul><li>Ingesta pública (RSS, USGS, GDELT, Banco Mundial)</li><li>Validaciones V01–V11</li><li>Registro solo-anejo</li></ul>
+          </div>
+          <div class="reto reto-banco">
+            <p class="reto-nombre">Reto Banco Sancocho</p>
+            <p class="sutil">Radar de Entorno.</p>
+            <ul><li>9 sectores económicos</li><li>Observación vs hipótesis</li><li>Sin recomendaciones de inversión</li></ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <span>open-news · Sancocho de Algoritmo · hackIAthon Panamá 2026</span>
+    <span><b>Prototipo de hackathon. No es un producto oficial de TVN Media.</b> Solo titulares y metadatos; aprobar como borrador no publica.</span>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+node_modules/
+.env
+logs/
+*.log
+.DS_Store
+
+# Caché local del modelo de embeddings (se descarga en el primer uso).
+.cache/
+
+# Los PDFs (manuales, plan) no se versionan.
+*.pdf
+
+# Datos generados en tiempo de ejecución (corpus, respaldo, cola). Se conserva
+# data/manifest.example.json como plantilla.
+data/raw/
+data/processed/
+data/registro/
+data/config.json

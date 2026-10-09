@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>open-news · Espacio de trabajo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230B1220'/%3E%3Ccircle cx='12' cy='16' r='6' fill='%23FEC526'/%3E%3Ccircle cx='22' cy='16' r='4' fill='%2306ACCB'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --azul: #005588; --noche: #0B1220; --blanco: #FFFFFF; --fondo: #F5F7F9;
+      --tinta: #2A2A2A; --gris: #5A6673; --linea: #E3E7EB; --amarillo: #FEC526;
+      --verde-t: #0E7A37; --rojo-t: #A93226; --ambar-t: #8A5A00;
+      --mod: #005588; --mod-t: #005588; --mod-suave: #E6F0F6;
+      --radio: 10px; --sombra: 0 1px 2px rgba(11,18,32,.06), 0 2px 8px rgba(11,18,32,.05);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--tinta); background: var(--fondo);
+    }
+    body[data-modulo="digital"] { --mod: #06ACCB; --mod-t: #046F84; --mod-suave: #E3F6FA; }
+    body[data-modulo="banca"] { --mod: #B8892B; --mod-t: #7D5A12; --mod-suave: #F7F0E1; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body { font-size: 15px; line-height: 1.5; min-height: 100vh; background: var(--fondo); }
+    button, input, textarea, select { font: inherit; }
+    :focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; border-radius: 4px; }
+    .oculto { display: none !important; }
+
+    .barra { background: var(--noche); color: #F5F7F9; display: flex; align-items: center; gap: 10px 16px; padding: 10px 20px; flex-wrap: wrap; }
+    .marca { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; font-weight: 800; font-size: 19px; }
+    .marca .punto { width: 14px; height: 14px; border-radius: 50%; background: var(--amarillo); box-shadow: 6px 0 0 -2px var(--mod), 12px 0 0 -4px #06ACCB; margin-right: 10px; }
+    .modulo-nombre { font-weight: 700; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,.08); }
+    .barra .espacio { flex: 1; }
+    .chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.08); color: #D5DEE8; }
+    .chip.alerta { background: var(--amarillo); color: var(--noche); }
+    .persona { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #D5DEE8; }
+    .persona input { width: 160px; padding: 6px 10px; border-radius: 8px; border: 1px solid #33415A; background: #16213A; color: #fff; min-height: 36px; }
+
+    .pestanas { display: flex; gap: 4px; padding: 0 20px; background: var(--blanco); border-bottom: 1px solid var(--linea); overflow-x: auto; position: sticky; top: 0; z-index: 15; }
+    .pestanas button { border: 0; background: none; padding: 14px 14px 12px; font-weight: 600; color: var(--gris); border-bottom: 3px solid transparent; cursor: pointer; min-height: 48px; white-space: nowrap; }
+    .pestanas button[aria-selected="true"] { color: var(--noche); border-bottom-color: var(--mod); }
+    .contador { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--linea); color: var(--noche); font-size: 12px; margin-left: 4px; }
+    .contador.hay { background: var(--amarillo); }
+
+    .panel-tab { padding: 20px; max-width: 1440px; margin: 0 auto; width: 100%; }
+    .trabajo { display: grid; grid-template-columns: 360px minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+    .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+    .caja { background: var(--blanco); border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra); padding: 16px; }
+    .caja h2 { margin: 0 0 10px; font-size: 15px; color: var(--noche); display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
+    .sutil { color: var(--gris); font-size: 13px; font-weight: 400; }
+
+    .filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .filtros select { min-height: 36px; border: 1px solid var(--linea); border-radius: 8px; padding: 4px 8px; background: #fff; max-width: 100%; }
+    .separador { font-size: 12px; color: var(--gris); text-transform: uppercase; letter-spacing: .6px; margin: 12px 0 4px; }
+    .lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .fila { width: 100%; text-align: left; border: 1px solid var(--linea); border-radius: 8px; background: #fff; padding: 10px; cursor: pointer; display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: start; }
+    .fila:hover { border-color: #C3CBD3; }
+    .fila[aria-current="true"] { border-color: var(--mod); box-shadow: inset 4px 0 0 var(--mod); background: var(--mod-suave); }
+    .puntaje { font-weight: 800; font-size: 18px; color: var(--noche); text-align: center; line-height: 1.1; }
+    .puntaje small { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+    .puntaje.alto small { color: var(--verde-t); } .puntaje.medio small { color: var(--ambar-t); } .puntaje.bajo small { color: var(--gris); }
+    .fila .tit { font-weight: 600; color: var(--noche); font-size: 14px; }
+    .etqs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .etq { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: #EEF1F4; color: var(--tinta); white-space: nowrap; }
+    .etq.pasa, .etq.suficiente { background: #E3F4EA; color: var(--verde-t); }
+    .etq.con_advertencias, .etq.parcial { background: #FFF4CC; color: var(--ambar-t); }
+    .etq.retenido, .etq.insuficiente, .etq.descartado_fd { background: #F8E1DE; color: var(--rojo-t); }
+    .etq.estado { background: var(--mod-suave); color: var(--mod-t); }
+    .paginacion { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 10px; }
+
+    .ficha-cab h2 { font-size: 21px; line-height: 1.25; margin: 6px 0 8px; color: var(--noche); }
+    .riune { display: grid; grid-template-columns: repeat(5, 1fr) 1.1fr; gap: 8px; margin: 12px 0; }
+    .comp { border: 1px solid var(--linea); border-radius: 8px; padding: 8px; background: #FAFBFC; }
+    .comp .l { font-size: 12px; color: var(--gris); display: flex; justify-content: space-between; }
+    .comp .v { font-weight: 800; font-size: 18px; color: var(--noche); }
+    .comp .barra-c { height: 6px; border-radius: 3px; background: var(--linea); overflow: hidden; margin-top: 4px; }
+    .comp .barra-c span { display: block; height: 100%; background: var(--mod); }
+    .comp.total { background: var(--noche); color: #fff; border-color: var(--noche); }
+    .comp.total .l { color: #C9D4E0; } .comp.total .v { color: #fff; font-size: 22px; }
+    .senal { border: 1px solid var(--linea); border-left: 4px solid var(--amarillo); border-radius: 6px; padding: 8px 10px; margin: 6px 0; font-size: 14px; }
+    .senal b { color: var(--noche); }
+    .afirm { padding: 8px 0; border-bottom: 1px solid var(--linea); font-size: 14px; }
+    .afirm:last-child { border-bottom: 0; }
+    .vacio { text-align: center; color: var(--gris); padding: 36px 16px; }
+    .vacio b { display: block; color: var(--noche); font-size: 16px; margin-bottom: 4px; }
+    .acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .acciones .ancho { grid-column: 1 / -1; }
+    .flujo-estados { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .flujo-estados span { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; background: #EEF1F4; color: var(--gris); }
+    .flujo-estados span.actual { background: var(--noche); color: #fff; }
+    .consulta-form { display: flex; gap: 8px; }
+    .consulta-form input { flex: 1; min-width: 0; }
+    .ejemplos { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .ejemplos button { font-size: 12.5px; border: 1px solid var(--linea); background: #fff; border-radius: 999px; padding: 4px 10px; cursor: pointer; min-height: 32px; color: var(--tinta); }
+    .respuesta { border: 1px solid var(--linea); border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 14px; white-space: pre-line; }
+    .respuesta.abstencion { border-color: #F2D98A; background: #FFFBEA; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--linea); background: var(--blanco); color: var(--noche); font-weight: 600; cursor: pointer; text-decoration: none; }
+    .btn:hover { border-color: #C3CBD3; background: #FAFBFC; }
+    .btn.primario { background: var(--mod-t); border-color: var(--mod-t); color: #fff; }
+    .btn.peligro { color: var(--rojo-t); border-color: #EBC4BF; }
+    .btn.chico { min-height: 34px; padding: 4px 12px; font-size: 13px; }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+    input[type="text"], textarea { width: 100%; border: 1px solid var(--linea); border-radius: 8px; padding: 8px 10px; min-height: 44px; }
+    textarea { min-height: 70px; resize: vertical; }
+    .mensaje { font-size: 13px; padding: 8px 10px; border-radius: 6px; margin-top: 8px; }
+    .mensaje.error { background: #F8E1DE; color: var(--rojo-t); }
+    .mensaje.ok { background: #E3F4EA; color: var(--verde-t); }
+    .tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tabla th, .tabla td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+    .tabla th { color: var(--gris); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+
+    @media (max-width: 1180px) { .trabajo { grid-template-columns: 320px minmax(0, 1fr); } .trabajo > .col.derecha { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 860px) { .trabajo { grid-template-columns: minmax(0, 1fr); } .trabajo > .col.derecha { display: flex; } .riune { grid-template-columns: repeat(3, 1fr); } .barra { padding: 10px 16px; } .panel-tab { padding: 16px; } }
+  </style>
+</head>
+<body data-modulo="">
+  <header class="barra">
+    <a class="marca" href="/"><span class="punto" aria-hidden="true"></span><span>open-news</span></a>
+    <span class="modulo-nombre" id="modulo-nombre">…</span>
+    <span class="espacio"></span>
+    <span class="chip" id="chip-meta">cargando…</span>
+    <label class="persona">Revisor/a <input id="persona" type="text" autocomplete="name" placeholder="Tu nombre" maxlength="80"></label>
+    <a class="btn chico" href="/" style="background:#16213A;border-color:#33415A;color:#F5F7F9;">Inicio</a>
+  </header>
+
+  <nav class="pestanas" id="tabs">
+    <button type="button" data-pane="bandeja" aria-selected="true">Bandeja</button>
+    <button type="button" data-pane="consulta">Consulta</button>
+    <button type="button" data-pane="entregables">Entregables</button>
+    <button type="button" data-pane="verificacion">Verificación <span class="contador" id="count-retenidos"></span></button>
+    <button type="button" data-pane="historial">Historial</button>
+  </nav>
+
+  <main>
+    <section id="bandeja" class="panel-tab">
+      <div class="trabajo">
+        <div class="col izquierda">
+          <div class="caja">
+            <h2>Bandeja priorizada <span class="sutil" id="meta-bandeja"></span></h2>
+            <div class="filtros" id="filtros"></div>
+            <div id="lista-bandeja"></div>
+          </div>
+        </div>
+
+        <div class="col central">
+          <div class="caja" id="ficha-card">
+            <div id="ficha-vacio" class="vacio"><b>Sin selección</b>Elige un caso de la bandeja.</div>
+            <div id="ficha-cuerpo" class="oculto">
+              <div class="ficha-cab">
+                <span class="sutil" id="ficha-id"></span>
+                <h2 id="ficha-tema"></h2>
+                <div class="etqs" id="ficha-etqs"></div>
+              </div>
+              <div class="riune" id="ficha-componentes"></div>
+              <div id="ficha-senales"></div>
+              <div id="ficha-afirmaciones"></div>
+              <div class="acciones" style="margin-top:12px">
+                <button class="btn primario ancho" id="btn-producir">Producir entregable</button>
+                <a class="btn" id="btn-exportar" href="#" target="_blank">Exportar .md</a>
+              </div>
+              <div id="borrador" class="respuesta oculto"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col derecha">
+          <div class="caja">
+            <h2>Revisión (humano)</h2>
+            <div class="flujo-estados" id="flujo-estados">
+              <span>nuevo</span><span>en revisión</span><span>requiere evidencia</span><span>aprobado borrador</span><span>descartado</span>
+            </div>
+            <textarea id="motivo" maxlength="500" placeholder="Motivo (obligatorio para descartar o pedir evidencia)"></textarea>
+            <div class="acciones" style="margin-top:8px">
+              <button class="btn" data-transicion="en_revision">En revisión</button>
+              <button class="btn" data-transicion="aprobado_borrador">Aprobar borrador</button>
+              <button class="btn" data-transicion="descartado">Descartar</button>
+              <button class="btn" data-transicion="requiere_evidencia">Requiere evidencia</button>
+            </div>
+            <div id="revision-result" class="mensaje oculto"></div>
+          </div>
+
+          <div class="caja">
+            <h2>Consulta en español</h2>
+            <form id="consulta-form" class="consulta-form">
+              <input id="consulta-input" type="text" placeholder="Ej. ¿Qué temas merecen revisión?" />
+              <button class="btn primario" type="submit">Consultar</button>
+            </form>
+            <div class="ejemplos" id="consulta-ejemplos"></div>
+            <div id="consulta-result" class="respuesta oculto"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="consulta" class="panel-tab oculto">
+      <div class="caja">
+        <h2>Consulta en español</h2>
+        <form id="consulta-form-2" class="consulta-form">
+          <input id="consulta-input-2" type="text" placeholder="Pregunta sobre el corpus…" />
+          <button class="btn primario" type="submit">Consultar</button>
+        </form>
+        <div class="ejemplos" id="consulta-ejemplos-2"></div>
+        <div id="consulta-result-2" class="respuesta oculto"></div>
+      </div>
+    </section>
+
+    <section id="entregables" class="panel-tab oculto">
+      <div class="caja">
+        <h2>Entregables del módulo</h2>
+        <p class="sutil">El borrador se genera desde la ficha (pestaña Bandeja, botón «Producir entregable») y aparece aquí.</p>
+        <div id="entregable-out" class="respuesta">Sin entregable generado todavía.</div>
+      </div>
+    </section>
+
+    <section id="verificacion" class="panel-tab oculto">
+      <div class="caja">
+        <h2>Bandeja de verificación <span class="sutil">Eventos retenidos por el filtro S3F</span></h2>
+        <table class="tabla">
+          <thead><tr><th>Evento</th><th>Tema</th><th>Señales</th><th>Nivel</th><th>Selección</th></tr></thead>
+          <tbody id="tabla-verificacion"></tbody>
+        </table>
+        <div class="acciones" style="margin-top:12px">
+          <input id="ver-motivo" type="text" placeholder="Motivo obligatorio" />
+          <button class="btn" id="btn-liberar">Liberar</button>
+          <button class="btn peligro" id="btn-descartar">Descartar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="historial" class="panel-tab oculto">
+      <div class="caja">
+        <h2>Historial de revisiones</h2>
+        <div id="historial-out" class="respuesta">Abre una ficha para ver su historial.</div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
